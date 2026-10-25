@@ -59,7 +59,8 @@ Bentuk state global: `{ tasks: Task[] }`.
   dueDate: '2026-10-20',          // string ISO (YYYY-MM-DD), bukan Date object
   source: 'LMS',                  // LMS | Personal Notes | Class Announcement
   type: 'GROUP',                  // GROUP | INDIVIDUAL
-  status: 'TODO'                  // TODO | IN_PROGRESS | DONE
+  status: 'TODO',                 // TODO | IN_PROGRESS | DONE
+  description: '...'              // string, deskripsi detail penugasan akademik
 }
 ```
 

@@ -7,6 +7,7 @@ const tasks = [
     source: 'LMS',
     type: 'GROUP',
     status: 'TODO',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
   },
   {
     id: 'TASK-002',
@@ -16,6 +17,7 @@ const tasks = [
     source: 'Personal Notes',
     type: 'INDIVIDUAL',
     status: 'IN_PROGRESS',
+    description: 'Review lecture notes on database normalization (1NF to BCNF) and relational algebra query optimization.',
   },
   {
     id: 'TASK-003',
@@ -25,6 +27,7 @@ const tasks = [
     source: 'Class Announcement',
     type: 'GROUP',
     status: 'TODO',
+    description: 'Prepare a 10-minute slide deck summarizing the group communication strategies and case analysis findings.',
   },
   {
     id: 'TASK-004',
@@ -34,6 +37,7 @@ const tasks = [
     source: 'LMS',
     type: 'INDIVIDUAL',
     status: 'DONE',
+    description: 'Complete the online quiz covering set theory, relations, and propositional logic on the LMS.',
   },
   {
     id: 'TASK-005',
@@ -43,6 +47,7 @@ const tasks = [
     source: 'Personal Notes',
     type: 'INDIVIDUAL',
     status: 'IN_PROGRESS',
+    description: 'Draft initial UI wireframes and user interaction flows for the mobile application assignment.',
   },
   {
     id: 'TASK-006',
@@ -52,6 +57,7 @@ const tasks = [
     source: 'Class Announcement',
     type: 'INDIVIDUAL',
     status: 'TODO',
+    description: 'Read textbook chapter 4 on transport layer protocols, socket programming, and TCP flow control.',
   },
 ];
 
