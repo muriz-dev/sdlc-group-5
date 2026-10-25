@@ -9,13 +9,19 @@ export function getTaskCounts(tasks) {
   };
 }
 
-export function toggleTaskCompletion(tasks, taskId) {
+const nextStatus = {
+  TODO: 'IN_PROGRESS',
+  IN_PROGRESS: 'DONE',
+  DONE: 'TODO',
+};
+
+export function advanceTaskStatus(tasks, taskId) {
   return tasks.map((task) => {
     if (task.id !== taskId) return task;
 
     return {
       ...task,
-      status: task.status === 'DONE' ? 'TODO' : 'DONE',
+      status: nextStatus[task.status] ?? task.status,
     };
   });
 }

@@ -38,11 +38,11 @@ src/App.jsx                 # owner state: data, selectedId, handler utama
 src/components/
   TaskList.jsx              # daftar tugas + empty state
   TaskCard.jsx              # kartu tugas (tombol seleksi, aria-pressed)
-  TaskDetails.jsx           # panel detail + tombol Mark as Done / Reopen Task
+  TaskDetails.jsx           # panel detail + tombol aksi status sesuai status saat ini
   StatusBadge.jsx           # badge status + pemetaan warna (tone)
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
 src/data/seed.js            # 6 record demo deterministik + createSeedData()
-src/utils/taskUtils.js      # sortTasksByDueDate(), getTaskCounts(), toggleTaskCompletion()
+src/utils/taskUtils.js      # sortTasksByDueDate(), getTaskCounts(), advanceTaskStatus()
 src/utils/storage.js        # loadState(), saveState(), resetState() + validasi shape
 src/styles.css              # seluruh styling, termasuk media query responsif
 ```
@@ -70,8 +70,8 @@ Bentuk state global: `{ tasks: Task[] }`.
 1. Inisialisasi: `useState(() => loadState(STORAGE_KEY, createSeedData))`.
 2. `loadState` membaca `localStorage`, `JSON.parse`, lalu memvalidasi bentuk data dengan `matchesShape` terhadap hasil seed. Data yang tidak cocok atau gagal di-parse akan diabaikan dan fallback ke seed.
 3. Setiap perubahan `data` disimpan lewat `useEffect` → `saveState` (try/catch, mengembalikan boolean, tidak melempar error).
-4. `handleToggleCompletion(taskId)` memetakan ulang tasks; status hanya bisa berpindah antara `DONE` ↔ `TODO`.
-5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke tugas pertama.
+4. `handleAdvanceStatus(taskId)` memetakan ulang tasks; status bergerak satu langkah: `TODO → IN_PROGRESS → DONE → TODO` (langkah terakhir adalah "Reopen Task"). Label tombol di `TaskDetails` mengikuti status: `Start Task`, `Mark as Done`, `Reopen Task`.
+5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke tugas dengan deadline terdekat.
 6. `selectedId` disimpan di state terpisah dan bisa menjadi `null` (mis. daftar kosong) — `TaskDetails` menangani kondisi ini lewat empty state.
 7. Daftar tugas selalu ditampilkan terurut naik berdasarkan `dueDate` (`sortTasksByDueDate`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
 

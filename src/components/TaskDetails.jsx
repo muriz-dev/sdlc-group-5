@@ -1,11 +1,15 @@
 import StatusBadge from './StatusBadge.jsx';
 
-export default function TaskDetails({ task, onToggleCompletion }) {
+const statusActions = {
+  TODO: 'Start Task',
+  IN_PROGRESS: 'Mark as Done',
+  DONE: 'Reopen Task',
+};
+
+export default function TaskDetails({ task, onAdvanceStatus }) {
   if (!task) {
     return <div className="empty-state">Select a task to view its details.</div>;
   }
-
-  const isDone = task.status === 'DONE';
 
   return (
     <>
@@ -31,9 +35,9 @@ export default function TaskDetails({ task, onToggleCompletion }) {
       <button
         className="primary-button"
         type="button"
-        onClick={() => onToggleCompletion(task.id)}
+        onClick={() => onAdvanceStatus(task.id)}
       >
-        {isDone ? 'Reopen Task' : 'Mark as Done'}
+        {statusActions[task.status] ?? 'Update Status'}
       </button>
     </>
   );
