@@ -26,6 +26,9 @@ export default function TaskDetails({ task, onToggleCompletion }) {
         <dd>{task.source}</dd>
         <dt>Type</dt>
         <dd>{task.type}</dd>
+        {/* Tambahan untuk Additional Instructions */}
+        <dt>Additional Instructions</dt>
+        <dd>{task.additionalInstructions || 'Tidak ada instruksi tambahan.'}</dd>
       </dl>
 
       <section className="task-detail-section" aria-label="Task description">
