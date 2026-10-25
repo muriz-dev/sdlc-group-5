@@ -1,4 +1,5 @@
 import StatusBadge from './StatusBadge.jsx';
+import { formatDeadline } from '../utils/dateUtils.js';
 
 export default function TaskCard({ task, isSelected, onSelect }) {
   return (
@@ -17,7 +18,7 @@ export default function TaskCard({ task, isSelected, onSelect }) {
       </span>
       <span className="card-footer">
         <span>{task.course}</span>
-        <span>Due {task.dueDate}</span>
+        <span>Due {formatDeadline(task.dueDate, task.dueTime)}</span>
       </span>
     </button>
   );

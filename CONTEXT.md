@@ -43,6 +43,7 @@ src/components/
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
 src/data/seed.js            # 6 record demo deterministik + createSeedData()
 src/utils/taskUtils.js      # sortTasksByDueDate(), getTaskCounts(), advanceTaskStatus()
+src/utils/dateUtils.js      # formatDeadlineDate(), formatDeadline() (tanggal + jam 24 jam)
 src/utils/storage.js        # loadState(), saveState(), resetState() + validasi shape
 src/styles.css              # seluruh styling, termasuk media query responsif
 ```
@@ -57,6 +58,7 @@ Bentuk state global: `{ tasks: Task[] }`.
   title: 'Submit group outline',
   course: 'Software Engineering',
   dueDate: '2026-10-20',          // string ISO (YYYY-MM-DD), bukan Date object
+  dueTime: '23:59',               // string 'HH:MM' 24 jam (tanpa AM/PM), mis. 00:00 vs 12:00
   source: 'LMS',                  // LMS | Personal Notes | Class Announcement
   type: 'GROUP',                  // GROUP | INDIVIDUAL
   status: 'TODO'                  // TODO | IN_PROGRESS | DONE
@@ -73,7 +75,8 @@ Bentuk state global: `{ tasks: Task[] }`.
 4. `handleAdvanceStatus(taskId)` memetakan ulang tasks; status bergerak satu langkah: `TODO → IN_PROGRESS → DONE → TODO` (langkah terakhir adalah "Reopen Task"). Label tombol di `TaskDetails` mengikuti status: `Start Task`, `Mark as Done`, `Reopen Task`.
 5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke tugas dengan deadline terdekat.
 6. `selectedId` disimpan di state terpisah dan bisa menjadi `null` (mis. daftar kosong) — `TaskDetails` menangani kondisi ini lewat empty state.
-7. Daftar tugas selalu ditampilkan terurut naik berdasarkan `dueDate` (`sortTasksByDueDate`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
+7. Daftar tugas selalu ditampilkan terurut naik berdasarkan deadline (`dueDate` lalu `dueTime`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
+8. Deadline ditampilkan lewat `dateUtils`: kartu memakai `formatDeadline` (`20 Oct 2026 · 23:59`), panel detail memisahkan `Due date` dan `Due time` dengan label `(24-hour)`. Format 24 jam dipilih agar `00:00` (tengah malam) dan `12:00` (siang) tidak ambigu.
 
 Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalikan status sebelumnya (`IN_PROGRESS`).
 
@@ -91,7 +94,7 @@ Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalik
 ## Batasan yang Disengaja
 
 - Data tidak pernah dikirim ke server dan tidak dibagikan antar-browser/perangkat.
-- Tidak ada validasi tanggal, filtering, pencarian, atau pembuatan tugas baru. Satu-satunya pengurutan adalah `dueDate` menaik (deadline terdekat lebih dulu).
+- Tidak ada validasi tanggal/jam, filtering, pencarian, atau pembuatan tugas baru. Satu-satunya pengurutan adalah deadline menaik (`dueDate` lalu `dueTime`).
 - `loadState` hanya memeriksa kesamaan tipe/shape, bukan validitas nilai domain (mis. `status` di luar enum tetap lolos).
 - Tidak ada test otomatis; verifikasi dilakukan manual lewat `npm run dev` atau `npm run build`.
 
