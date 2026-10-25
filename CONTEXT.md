@@ -37,7 +37,7 @@ src/main.jsx                # bootstrap React (StrictMode) + import styles.css
 src/App.jsx                 # owner state: data, selectedId, handler utama
 src/components/
   TaskList.jsx              # daftar tugas + empty state
-  TaskCard.jsx              # kartu tugas (tombol seleksi, aria-pressed)
+  TaskCard.jsx              # kartu tugas (tombol seleksi, aria-pressed) + penanda update
   TaskDetails.jsx           # panel detail + tombol aksi status sesuai status saat ini
   StatusBadge.jsx           # badge status + pemetaan warna (tone)
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
@@ -59,6 +59,10 @@ Bentuk state global: `{ tasks: Task[] }`.
   course: 'Software Engineering',
   dueDate: '2026-10-20',          // string ISO (YYYY-MM-DD), bukan Date object
   dueTime: '23:59',               // string 'HH:MM' 24 jam (tanpa AM/PM), mis. 00:00 vs 12:00
+  previousDueDate: '',            // deadline sebelum diubah; '' jika belum pernah berubah
+  previousDueTime: '',            // jam deadline sebelumnya; '' jika belum pernah berubah
+  deadlineUpdatedAt: '',          // tanggal perubahan deadline (YYYY-MM-DD); '' jika tidak ada
+  instructionsUpdatedAt: '',      // tanggal perubahan instruksi (YYYY-MM-DD); '' jika tidak ada
   source: 'LMS',                  // LMS | Personal Notes | Class Announcement
   type: 'GROUP',                  // GROUP | INDIVIDUAL
   status: 'TODO'                  // TODO | IN_PROGRESS | DONE
@@ -77,6 +81,8 @@ Bentuk state global: `{ tasks: Task[] }`.
 6. `selectedId` disimpan di state terpisah dan bisa menjadi `null` (mis. daftar kosong) — `TaskDetails` menangani kondisi ini lewat empty state.
 7. Daftar tugas selalu ditampilkan terurut naik berdasarkan deadline (`dueDate` lalu `dueTime`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
 8. Deadline ditampilkan lewat `dateUtils`: kartu memakai `formatDeadline` (`20 Oct 2026 · 23:59`), panel detail memisahkan `Due date` dan `Due time` dengan label `(24-hour)`. Format 24 jam dipilih agar `00:00` (tengah malam) dan `12:00` (siang) tidak ambigu.
+9. `TaskDetails` menampilkan notice perubahan bila `deadlineUpdatedAt` atau `instructionsUpdatedAt` tidak kosong: badge `Updated`, entri `Deadline changed` (deadline baru + deadline sebelumnya + tanggal perubahan), entri `Instructions updated`, dan marker `Changed` di samping `Due date`. `previousDueDate`/`previousDueTime` hanya dibaca saat `deadlineUpdatedAt` ada. Field penanda memakai string kosong (bukan `null`) agar `matchesShape` tetap konsisten dengan task lain yang tidak berubah.
+10. `TaskCard` menampilkan penanda ringkas di daftar: `Deadline updated` bila `deadlineUpdatedAt` ada, selain itu `Instructions updated` bila `instructionsUpdatedAt` ada. Tujuannya agar pengguna bisa melihat task yang berubah tanpa membuka detail satu per satu.
 
 Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalikan status sebelumnya (`IN_PROGRESS`).
 
@@ -95,6 +101,7 @@ Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalik
 
 - Data tidak pernah dikirim ke server dan tidak dibagikan antar-browser/perangkat.
 - Tidak ada validasi tanggal/jam, filtering, pencarian, atau pembuatan tugas baru. Satu-satunya pengurutan adalah deadline menaik (`dueDate` lalu `dueTime`).
+- Tidak ada peran dosen, enrollment, maupun UI untuk mengubah deadline/instruksi: metadata perubahan berasal dari seed dan hanya ditampilkan. Karena data lokal per-browser, semua pengguna demo melihat perubahan yang sama saat data seed dimuat.
 - `loadState` hanya memeriksa kesamaan tipe/shape, bukan validitas nilai domain (mis. `status` di luar enum tetap lolos).
 - Tidak ada test otomatis; verifikasi dilakukan manual lewat `npm run dev` atau `npm run build`.
 
