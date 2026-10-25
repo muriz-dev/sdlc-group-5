@@ -4,9 +4,9 @@ import TaskList from './components/TaskList.jsx';
 import ResetControl from './components/ResetControl.jsx';
 import { createSeedData } from './data/seed.js';
 import {
+  advanceTaskStatus,
   getTaskCounts,
   sortTasksByDueDate,
-  toggleTaskCompletion,
 } from './utils/taskUtils.js';
 import { loadState, resetState, saveState } from './utils/storage.js';
 
@@ -26,10 +26,10 @@ export default function App() {
   const sortedTasks = sortTasksByDueDate(data.tasks);
   const counts = getTaskCounts(data.tasks);
 
-  function handleToggleCompletion(taskId) {
+  function handleAdvanceStatus(taskId) {
     setData((current) => ({
       ...current,
-      tasks: toggleTaskCompletion(current.tasks, taskId),
+      tasks: advanceTaskStatus(current.tasks, taskId),
     }));
   }
 
@@ -75,7 +75,7 @@ export default function App() {
           />
         </section>
         <aside className="panel" aria-label="Selected task details">
-          <TaskDetails task={selectedTask} onToggleCompletion={handleToggleCompletion} />
+          <TaskDetails task={selectedTask} onAdvanceStatus={handleAdvanceStatus} />
         </aside>
       </section>
     </main>
