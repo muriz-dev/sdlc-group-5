@@ -42,7 +42,7 @@ src/components/
   StatusBadge.jsx           # badge status + pemetaan warna (tone)
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
 src/data/seed.js            # 6 record demo deterministik + createSeedData()
-src/utils/taskUtils.js      # getTaskCounts(), toggleTaskCompletion()
+src/utils/taskUtils.js      # sortTasksByDueDate(), getTaskCounts(), toggleTaskCompletion()
 src/utils/storage.js        # loadState(), saveState(), resetState() + validasi shape
 src/styles.css              # seluruh styling, termasuk media query responsif
 ```
@@ -73,6 +73,7 @@ Bentuk state global: `{ tasks: Task[] }`.
 4. `handleToggleCompletion(taskId)` memetakan ulang tasks; status hanya bisa berpindah antara `DONE` ↔ `TODO`.
 5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke tugas pertama.
 6. `selectedId` disimpan di state terpisah dan bisa menjadi `null` (mis. daftar kosong) — `TaskDetails` menangani kondisi ini lewat empty state.
+7. Daftar tugas selalu ditampilkan terurut naik berdasarkan `dueDate` (`sortTasksByDueDate`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
 
 Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalikan status sebelumnya (`IN_PROGRESS`).
 
@@ -90,7 +91,7 @@ Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalik
 ## Batasan yang Disengaja
 
 - Data tidak pernah dikirim ke server dan tidak dibagikan antar-browser/perangkat.
-- Tidak ada validasi tanggal, sorting, filtering, pencarian, atau pembuatan tugas baru.
+- Tidak ada validasi tanggal, filtering, pencarian, atau pembuatan tugas baru. Satu-satunya pengurutan adalah `dueDate` menaik (deadline terdekat lebih dulu).
 - `loadState` hanya memeriksa kesamaan tipe/shape, bukan validitas nilai domain (mis. `status` di luar enum tetap lolos).
 - Tidak ada test otomatis; verifikasi dilakukan manual lewat `npm run dev` atau `npm run build`.
 

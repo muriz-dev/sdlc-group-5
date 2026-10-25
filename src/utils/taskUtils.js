@@ -1,3 +1,7 @@
+export function sortTasksByDueDate(tasks) {
+  return [...tasks].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+}
+
 export function getTaskCounts(tasks) {
   return {
     total: tasks.length,
