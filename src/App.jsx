@@ -3,20 +3,27 @@ import TaskDetails from './components/TaskDetails.jsx';
 import TaskList from './components/TaskList.jsx';
 import ResetControl from './components/ResetControl.jsx';
 import { createSeedData } from './data/seed.js';
-import { getTaskCounts, toggleTaskCompletion } from './utils/taskUtils.js';
+import {
+  getTaskCounts,
+  sortTasksByDueDate,
+  toggleTaskCompletion,
+} from './utils/taskUtils.js';
 import { loadState, resetState, saveState } from './utils/storage.js';
 
 const STORAGE_KEY = 'sdlc:case-c:v1';
 
 export default function App() {
   const [data, setData] = useState(() => loadState(STORAGE_KEY, createSeedData));
-  const [selectedId, setSelectedId] = useState(() => data.tasks[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useState(
+    () => sortTasksByDueDate(data.tasks)[0]?.id ?? null,
+  );
 
   useEffect(() => {
     saveState(STORAGE_KEY, data);
   }, [data]);
 
   const selectedTask = data.tasks.find((task) => task.id === selectedId) ?? null;
+  const sortedTasks = sortTasksByDueDate(data.tasks);
   const counts = getTaskCounts(data.tasks);
 
   function handleToggleCompletion(taskId) {
@@ -29,7 +36,7 @@ export default function App() {
   function handleReset() {
     const freshData = resetState(STORAGE_KEY, createSeedData);
     setData(freshData);
-    setSelectedId(freshData.tasks[0]?.id ?? null);
+    setSelectedId(sortTasksByDueDate(freshData.tasks)[0]?.id ?? null);
   }
 
   return (
@@ -62,7 +69,7 @@ export default function App() {
         <section className="panel" aria-labelledby="task-list-heading">
           <h2 id="task-list-heading">Academic Tasks</h2>
           <TaskList
-            tasks={data.tasks}
+            tasks={sortedTasks}
             selectedId={selectedId}
             onSelect={setSelectedId}
           />
