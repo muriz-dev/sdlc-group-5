@@ -240,6 +240,83 @@ h3 {
   color: #475467;
 }
 
+.change-notice {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid #fedf89;
+  border-radius: 12px;
+  background: #fffaeb;
+}
+
+.change-notice-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: #93370d;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.card-badges {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.change-badge,
+.change-marker,
+.card-update {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #fef0c7;
+  color: #93370d;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-update {
+  white-space: nowrap;
+}
+
+.change-marker {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.change-entry + .change-entry {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #fedf89;
+}
+
+.change-entry p {
+  margin: 0 0 4px;
+}
+
+.change-entry p:last-child {
+  margin-bottom: 0;
+}
+
+.change-entry-title {
+  color: #93370d;
+  font-weight: 800;
+}
+
+.change-previous,
+.change-meta {
+  color: #667085;
+  font-size: 0.84rem;
+}
+
 .details-list {
   display: grid;
   grid-template-columns: minmax(110px, 0.42fr) 1fr;
@@ -394,5 +471,9 @@ h3 {
   .secondary-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .card-badges {
+    justify-content: flex-start;
   }
 }
