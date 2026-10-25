@@ -34,15 +34,15 @@ npm run preview # pratinjau hasil build
 ```
 index.html                  # entry HTML, mount #root
 src/main.jsx                # bootstrap React (StrictMode) + import styles.css
-src/App.jsx                 # owner state: data, selectedId, handler utama
+src/App.jsx                 # owner state: data, selectedId, showCompleted, handler utama
 src/components/
-  TaskList.jsx              # daftar tugas + empty state
+  TaskList.jsx              # daftar tugas + empty state (pesan bisa dikustom)
   TaskCard.jsx              # kartu tugas (tombol seleksi, aria-pressed) + penanda update
   TaskDetails.jsx           # panel detail + tombol aksi status sesuai status saat ini
   StatusBadge.jsx           # badge status + pemetaan warna (tone)
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
 src/data/seed.js            # 6 record demo deterministik + createSeedData()
-src/utils/taskUtils.js      # sortTasksByDueDate(), getTaskCounts(), advanceTaskStatus()
+src/utils/taskUtils.js      # sortTasksByDueDate(), isActiveTask(), getVisibleTasks(), getTaskCounts(), advanceTaskStatus()
 src/utils/dateUtils.js      # formatDeadlineDate(), formatDeadline() (tanggal + jam 24 jam)
 src/utils/storage.js        # loadState(), saveState(), resetState() + validasi shape
 src/styles.css              # seluruh styling, termasuk media query responsif
@@ -77,12 +77,13 @@ Bentuk state global: `{ tasks: Task[] }`.
 2. `loadState` membaca `localStorage`, `JSON.parse`, lalu memvalidasi bentuk data dengan `matchesShape` terhadap hasil seed. Data yang tidak cocok atau gagal di-parse akan diabaikan dan fallback ke seed.
 3. Setiap perubahan `data` disimpan lewat `useEffect` → `saveState` (try/catch, mengembalikan boolean, tidak melempar error).
 4. `handleAdvanceStatus(taskId)` memetakan ulang tasks; status bergerak satu langkah: `TODO → IN_PROGRESS → DONE → TODO` (langkah terakhir adalah "Reopen Task"). Label tombol di `TaskDetails` mengikuti status: `Start Task`, `Mark as Done`, `Reopen Task`.
-5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke tugas dengan deadline terdekat.
+5. `handleReset()` memanggil `resetState` (hapus key + seed baru), lalu mereset `selectedId` ke item pertama daftar yang sedang terlihat (menghormati `showCompleted`).
 6. `selectedId` disimpan di state terpisah dan bisa menjadi `null` (mis. daftar kosong) — `TaskDetails` menangani kondisi ini lewat empty state.
-7. Daftar tugas selalu ditampilkan terurut naik berdasarkan deadline (`dueDate` lalu `dueTime`, perbandingan string ISO). Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya, dan pilihan awal (`selectedId`) mengikuti item pertama hasil sorting.
+7. Daftar adalah **tampilan gabungan lintas mata kuliah**: `getVisibleTasks(tasks, showCompleted)` mengurutkan seluruh `data.tasks` berdasarkan deadline (`dueDate` lalu `dueTime`) lalu menyaring task aktif (`status !== 'DONE'`) kecuali `showCompleted` aktif. Sorting hanya untuk tampilan: `data.tasks` di state tetap memakai urutan aslinya.
 8. Deadline ditampilkan lewat `dateUtils`: kartu memakai `formatDeadline` (`20 Oct 2026 · 23:59`), panel detail memisahkan `Due date` dan `Due time` dengan label `(24-hour)`. Format 24 jam dipilih agar `00:00` (tengah malam) dan `12:00` (siang) tidak ambigu.
 9. `TaskDetails` menampilkan notice perubahan bila `deadlineUpdatedAt` atau `instructionsUpdatedAt` tidak kosong: badge `Updated`, entri `Deadline changed` (deadline baru + deadline sebelumnya + tanggal perubahan), entri `Instructions updated`, dan marker `Changed` di samping `Due date`. `previousDueDate`/`previousDueTime` hanya dibaca saat `deadlineUpdatedAt` ada. Field penanda memakai string kosong (bukan `null`) agar `matchesShape` tetap konsisten dengan task lain yang tidak berubah.
 10. `TaskCard` menampilkan penanda ringkas di daftar: `Deadline updated` bila `deadlineUpdatedAt` ada, selain itu `Instructions updated` bila `instructionsUpdatedAt` ada. Tujuannya agar pengguna bisa melihat task yang berubah tanpa membuka detail satu per satu.
+11. `showCompleted` (default `false`) dikendalikan checkbox `Show completed (n)` di header daftar. Ringkasan `N active assignments from M courses · nearest deadline first` dihitung dari daftar yang terlihat. Saat toggle dimatikan dan task terpilih berstatus `DONE`, `selectedId` pindah ke task aktif pertama (atau `null`). Saat task terpilih berubah menjadi `DONE` dengan completed disembunyikan, selection juga pindah ke task aktif berikutnya. Empty state memakai pesan berbeda: `No active assignments...` vs `No academic tasks are available.`
 
 Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalikan status sebelumnya (`IN_PROGRESS`).
 
@@ -90,7 +91,7 @@ Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalik
 
 - Component function biasa dengan `export default`, file `.jsx`, satu komponen per file.
 - Props diteruskan eksplisit; tanpa Context, tanpa prop-drilling abstractions, tanpa library UI.
-- Nama handler di `App.jsx` memakai prefix `handle*` (`handleToggleCompletion`, `handleReset`).
+- Nama handler di `App.jsx` memakai prefix `handle*` (`handleAdvanceStatus`, `handleToggleCompleted`, `handleReset`).
 - Utility murni (tanpa side effect React) berada di `src/utils/`; fungsi transformasi mengembalikan array baru, tidak memutasi input.
 - Status ditampilkan sebagai teks uppercase dan garis bawah diganti spasi (`IN_PROGRESS` → `IN PROGRESS`); tone warna dipetakan di `StatusBadge.jsx` (`success`, `info`, `warning`, `neutral`).
 - Styling memakai class name deskriptif (`app-shell`, `record-card`, `panel`) dan design token warna langsung di CSS (`#2563eb` sebagai warna primer).
@@ -100,8 +101,8 @@ Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalik
 ## Batasan yang Disengaja
 
 - Data tidak pernah dikirim ke server dan tidak dibagikan antar-browser/perangkat.
-- Tidak ada validasi tanggal/jam, filtering, pencarian, atau pembuatan tugas baru. Satu-satunya pengurutan adalah deadline menaik (`dueDate` lalu `dueTime`).
-- Tidak ada peran dosen, enrollment, maupun UI untuk mengubah deadline/instruksi: metadata perubahan berasal dari seed dan hanya ditampilkan. Karena data lokal per-browser, semua pengguna demo melihat perubahan yang sama saat data seed dimuat.
+- Tidak ada validasi tanggal/jam, pencarian, atau pembuatan tugas baru. Filter yang ada hanya `Show completed` (menyembunyikan task `DONE`), dan satu-satunya pengurutan adalah deadline menaik (`dueDate` lalu `dueTime`).
+- Tidak ada peran dosen, enrollment, maupun UI untuk mengubah deadline/instruksi: metadata perubahan berasal dari seed dan hanya ditampilkan. Karena data lokal per-browser, semua pengguna demo melihat perubahan yang sama saat data seed dimuat. "Mata kuliah yang diikuti" diwakili oleh seluruh `course` yang ada di `data.tasks`.
 - `loadState` hanya memeriksa kesamaan tipe/shape, bukan validitas nilai domain (mis. `status` di luar enum tetap lolos).
 - Tidak ada test otomatis; verifikasi dilakukan manual lewat `npm run dev` atau `npm run build`.
 

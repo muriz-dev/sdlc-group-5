@@ -1,8 +1,13 @@
 import TaskCard from './TaskCard.jsx';
 
-export default function TaskList({ tasks, selectedId, onSelect }) {
+export default function TaskList({
+  tasks,
+  selectedId,
+  onSelect,
+  emptyMessage = 'No academic tasks are available.',
+}) {
   if (tasks.length === 0) {
-    return <div className="empty-state">No academic tasks are available.</div>;
+    return <div className="empty-state">{emptyMessage}</div>;
   }
 
   return (

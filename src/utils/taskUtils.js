@@ -4,6 +4,15 @@ export function sortTasksByDueDate(tasks) {
   );
 }
 
+export function isActiveTask(task) {
+  return task.status !== 'DONE';
+}
+
+export function getVisibleTasks(tasks, showCompleted) {
+  const sortedTasks = sortTasksByDueDate(tasks);
+  return showCompleted ? sortedTasks : sortedTasks.filter(isActiveTask);
+}
+
 export function getTaskCounts(tasks) {
   return {
     total: tasks.length,
