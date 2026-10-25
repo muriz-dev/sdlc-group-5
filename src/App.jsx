@@ -60,6 +60,10 @@ export default function App() {
           <p className="summary-value">{counts.total}</p>
         </article>
         <article className="summary-card">
+          <p className="summary-label">In progress tasks</p>
+          <p className="summary-value">{counts.inProgress}</p>
+        </article>
+        <article className="summary-card">
           <p className="summary-label">Done tasks</p>
           <p className="summary-value">{counts.done}</p>
         </article>

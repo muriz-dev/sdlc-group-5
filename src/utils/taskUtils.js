@@ -5,6 +5,7 @@ export function sortTasksByDueDate(tasks) {
 export function getTaskCounts(tasks) {
   return {
     total: tasks.length,
+    inProgress: tasks.filter((task) => task.status === 'IN_PROGRESS').length,
     done: tasks.filter((task) => task.status === 'DONE').length,
   };
 }
