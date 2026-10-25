@@ -1,5 +1,7 @@
 export function sortTasksByDueDate(tasks) {
-  return [...tasks].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  return [...tasks].sort((a, b) =>
+    `${a.dueDate}T${a.dueTime}`.localeCompare(`${b.dueDate}T${b.dueTime}`),
+  );
 }
 
 export function getTaskCounts(tasks) {

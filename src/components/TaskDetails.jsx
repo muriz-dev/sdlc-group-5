@@ -1,4 +1,5 @@
 import StatusBadge from './StatusBadge.jsx';
+import { formatDeadlineDate } from '../utils/dateUtils.js';
 
 const statusActions = {
   TODO: 'Start Task',
@@ -25,7 +26,9 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
         <dt>Course</dt>
         <dd>{task.course}</dd>
         <dt>Due date</dt>
-        <dd>{task.dueDate}</dd>
+        <dd>{formatDeadlineDate(task.dueDate)}</dd>
+        <dt>Due time</dt>
+        <dd>{task.dueTime} (24-hour)</dd>
         <dt>Source</dt>
         <dd>{task.source}</dd>
         <dt>Type</dt>
