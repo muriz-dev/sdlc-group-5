@@ -42,6 +42,34 @@ export function getVisibleTasks(tasks, showCompleted) {
   return showCompleted ? sortedTasks : sortedTasks.filter(isActiveTask);
 }
 
+export function getFilteredTasks(
+  tasks,
+  { query = '', view = 'ACTIVE', status = 'ALL', type = 'ALL', course = 'ALL' } = {},
+  now = new Date(),
+) {
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleTasks = sortTasksByDueDate(tasks).filter((task) => {
+    if (view === 'COMPLETED') return task.status === 'DONE';
+    if (view === 'ACTIVE') return task.status !== 'DONE';
+    return true;
+  });
+
+  return visibleTasks.filter((task) => {
+    const matchesQuery =
+      !normalizedQuery ||
+      [task.id, task.title, task.course].some((value) =>
+        value.toLowerCase().includes(normalizedQuery),
+      );
+    const matchesStatus =
+      status === 'ALL' ||
+      (status === 'OVERDUE' ? isOverdueTask(task, now) : task.status === status);
+    const matchesType = type === 'ALL' || task.type === type;
+    const matchesCourse = course === 'ALL' || task.course === course;
+
+    return matchesQuery && matchesStatus && matchesType && matchesCourse;
+  });
+}
+
 export function getTaskCounts(tasks, now = new Date()) {
   return {
     total: tasks.length,

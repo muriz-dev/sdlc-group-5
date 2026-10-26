@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  getFilteredTasks,
   getTaskCounts,
   getVisibleTasks,
   isOverdueTask,
@@ -47,5 +48,57 @@ test('task counts include overdue unfinished assignments', () => {
     inProgress: 1,
     done: 1,
     overdue: 2,
+  });
+
+  test('task filters search across task id, title, and course', () => {
+    const tasks = [
+      { ...task, title: 'Prepare slides' },
+      { ...task, id: 'TASK-OTHER', title: 'Review notes', course: 'Database Systems' },
+    ];
+
+    assert.deepEqual(
+      getFilteredTasks(tasks, { query: 'database' }).map(({ id }) => id),
+      ['TASK-OTHER'],
+    );
+  });
+
+  test('task filters combine status and type', () => {
+    const tasks = [
+      { ...task, type: 'GROUP', status: 'TODO' },
+      { ...task, id: 'TASK-INDIVIDUAL', type: 'INDIVIDUAL', status: 'TODO' },
+    ];
+
+    assert.deepEqual(
+      getFilteredTasks(tasks, { type: 'INDIVIDUAL', status: 'TODO' }).map(({ id }) => id),
+      ['TASK-INDIVIDUAL'],
+    );
+  });
+
+  test('all tasks view includes completed tasks', () => {
+    const tasks = [
+      { ...task, status: 'TODO' },
+      { ...task, id: 'TASK-DONE', status: 'DONE' },
+    ];
+
+    assert.deepEqual(
+      getFilteredTasks(tasks, { view: 'ALL' }).map(({ id }) => id),
+      ['TASK-TEST', 'TASK-DONE'],
+    );
+  });
+
+  test('active view hides completed tasks and completed view shows them', () => {
+    const tasks = [
+      { ...task, status: 'TODO' },
+      { ...task, id: 'TASK-DONE', status: 'DONE' },
+    ];
+
+    assert.deepEqual(
+      getFilteredTasks(tasks, { view: 'ACTIVE' }).map(({ id }) => id),
+      ['TASK-TEST'],
+    );
+    assert.deepEqual(
+      getFilteredTasks(tasks, { view: 'COMPLETED' }).map(({ id }) => id),
+      ['TASK-DONE'],
+    );
   });
 });
