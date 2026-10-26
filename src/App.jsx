@@ -6,7 +6,7 @@ import { createSeedData } from './data/seed.js';
 import {
   advanceTaskStatus,
   getTaskCounts,
-  sortTasksByDueDate,
+  getVisibleTasks,
 } from './utils/taskUtils.js';
 import { loadState, resetState, saveState } from './utils/storage.js';
 
@@ -15,28 +15,46 @@ const STORAGE_KEY = 'sdlc:case-c:v1';
 export default function App() {
   const [data, setData] = useState(() => loadState(STORAGE_KEY, createSeedData));
   const [selectedId, setSelectedId] = useState(
-    () => sortTasksByDueDate(data.tasks)[0]?.id ?? null,
+    () => getVisibleTasks(data.tasks, false)[0]?.id ?? null,
   );
+  const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
     saveState(STORAGE_KEY, data);
   }, [data]);
 
   const selectedTask = data.tasks.find((task) => task.id === selectedId) ?? null;
-  const sortedTasks = sortTasksByDueDate(data.tasks);
+  const visibleTasks = getVisibleTasks(data.tasks, showCompleted);
+  const visibleCourseCount = new Set(visibleTasks.map((task) => task.course)).size;
   const counts = getTaskCounts(data.tasks);
 
+  const emptyMessage = showCompleted
+    ? 'No academic tasks are available.'
+    : 'No active assignments. Turn on "Show completed" to see finished tasks.';
+
   function handleAdvanceStatus(taskId) {
-    setData((current) => ({
-      ...current,
-      tasks: advanceTaskStatus(current.tasks, taskId),
-    }));
+    const nextTasks = advanceTaskStatus(data.tasks, taskId);
+    setData((current) => ({ ...current, tasks: nextTasks }));
+
+    const updatedTask = nextTasks.find((task) => task.id === taskId);
+    if (!showCompleted && updatedTask.status === 'DONE' && taskId === selectedId) {
+      setSelectedId(getVisibleTasks(nextTasks, false)[0]?.id ?? null);
+    }
+  }
+
+  function handleToggleCompleted() {
+    const nextShowCompleted = !showCompleted;
+    setShowCompleted(nextShowCompleted);
+
+    if (!nextShowCompleted && selectedTask?.status === 'DONE') {
+      setSelectedId(getVisibleTasks(data.tasks, false)[0]?.id ?? null);
+    }
   }
 
   function handleReset() {
     const freshData = resetState(STORAGE_KEY, createSeedData);
     setData(freshData);
-    setSelectedId(sortTasksByDueDate(freshData.tasks)[0]?.id ?? null);
+    setSelectedId(getVisibleTasks(freshData.tasks, showCompleted)[0]?.id ?? null);
   }
 
   return (
@@ -71,11 +89,29 @@ export default function App() {
 
       <section className="content-grid">
         <section className="panel" aria-labelledby="task-list-heading">
-          <h2 id="task-list-heading">Academic Tasks</h2>
+          <div className="list-header">
+            <div>
+              <h2 id="task-list-heading">Academic Tasks</h2>
+              <p className="list-note">
+                {showCompleted
+                  ? `${visibleTasks.length} assignments from ${visibleCourseCount} courses · nearest deadline first`
+                  : `${visibleTasks.length} active assignments from ${visibleCourseCount} courses · nearest deadline first`}
+              </p>
+            </div>
+            <label className="show-completed">
+              <input
+                type="checkbox"
+                checked={showCompleted}
+                onChange={handleToggleCompleted}
+              />
+              Show completed ({counts.done})
+            </label>
+          </div>
           <TaskList
-            tasks={sortedTasks}
+            tasks={visibleTasks}
             selectedId={selectedId}
             onSelect={setSelectedId}
+            emptyMessage={emptyMessage}
           />
         </section>
         <aside className="panel" aria-label="Selected task details">
