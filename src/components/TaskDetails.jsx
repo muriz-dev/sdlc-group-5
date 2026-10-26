@@ -16,10 +16,6 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
   const hasInstructionChange = Boolean(task.instructionsUpdatedAt);
   const hasUpdates = hasDeadlineChange || hasInstructionChange;
 
-  const handleMagdalenaAction = () => {
-    alert("Fitur verifikasi oleh Magdalena berhasil dijalankan!");
-  };
-
   return (
     <>
       <div className="panel-heading">
@@ -78,6 +74,7 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
         <dd>{task.source}</dd>
         <dt>Type</dt>
         <dd>{task.type}</dd>
+        {/* Tambahan untuk Additional Instructions */}
         <dt>Additional Instructions</dt>
         <dd>{task.additionalInstructions || 'Tidak ada instruksi tambahan.'}</dd>
       </dl>
@@ -86,26 +83,6 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
         <h3>Description</h3>
         <p className="task-description">{task.description || 'No description provided.'}</p>
       </section>
-
-      {/* Tombol Fitur Interaktif Magdalena */}
-      <div style={{ margin: '16px 0' }}>
-        <button
-          type="button"
-          onClick={handleMagdalenaAction}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#eff6ff',
-            color: '#1d4ed8',
-            border: '1px solid #bfdbfe',
-            borderRadius: '6px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}
-        >
-          ✨ Tandai Telah Direview oleh Magdalena
-        </button>
-      </div>
 
       <button
         className="primary-button"
