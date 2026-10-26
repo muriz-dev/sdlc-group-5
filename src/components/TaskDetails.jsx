@@ -1,5 +1,6 @@
 import StatusBadge from './StatusBadge.jsx';
 import { formatDeadline, formatDeadlineDate } from '../utils/dateUtils.js';
+import { isOverdueTask } from '../utils/taskUtils.js';
 
 const statusActions = {
   TODO: 'Start Task',
@@ -7,7 +8,7 @@ const statusActions = {
   DONE: 'Reopen Task',
 };
 
-export default function TaskDetails({ task, onAdvanceStatus }) {
+export default function TaskDetails({ task, onAdvanceStatus, currentTime }) {
   if (!task) {
     return <div className="empty-state">Select a task to view its details.</div>;
   }
@@ -15,6 +16,7 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
   const hasDeadlineChange = Boolean(task.deadlineUpdatedAt);
   const hasInstructionChange = Boolean(task.instructionsUpdatedAt);
   const hasUpdates = hasDeadlineChange || hasInstructionChange;
+  const isOverdue = isOverdueTask(task, currentTime);
 
   return (
     <>
@@ -23,8 +25,20 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
           <p className="eyebrow">{task.id}</p>
           <h2>{task.title}</h2>
         </div>
-        <StatusBadge status={task.status} />
+        <div className="card-badges">
+          {isOverdue && <StatusBadge status="OVERDUE" />}
+          <StatusBadge status={task.status} />
+        </div>
       </div>
+
+      {isOverdue && (
+        <section className="overdue-notice" aria-label="Overdue task warning">
+          <strong>Deadline has passed.</strong>
+          <span>
+            This unfinished assignment remains visible so it can still be prioritized.
+          </span>
+        </section>
+      )}
 
       {hasUpdates && (
         <section className="change-notice" aria-label="Lecturer updates">

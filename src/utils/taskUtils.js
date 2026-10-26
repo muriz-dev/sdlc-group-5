@@ -8,16 +8,46 @@ export function isActiveTask(task) {
   return task.status !== 'DONE';
 }
 
+export function getTaskDeadline(task) {
+  const [year, month, day] = task.dueDate.split('-').map(Number);
+  const [hour, minute] = task.dueTime.split(':').map(Number);
+  const deadline = new Date(year, month - 1, day, hour, minute);
+
+  const hasValidParts = [year, month, day, hour, minute].every(Number.isFinite);
+  const matchesInput =
+    deadline.getFullYear() === year &&
+    deadline.getMonth() === month - 1 &&
+    deadline.getDate() === day &&
+    deadline.getHours() === hour &&
+    deadline.getMinutes() === minute;
+
+  return hasValidParts && matchesInput ? deadline : null;
+}
+
+export function isOverdueTask(task, now = new Date()) {
+  if (!isActiveTask(task)) return false;
+
+  const deadline = getTaskDeadline(task);
+  const comparisonTime = now instanceof Date ? now : new Date(now);
+
+  return Boolean(
+    deadline &&
+      Number.isFinite(comparisonTime.getTime()) &&
+      comparisonTime.getTime() > deadline.getTime(),
+  );
+}
+
 export function getVisibleTasks(tasks, showCompleted) {
   const sortedTasks = sortTasksByDueDate(tasks);
   return showCompleted ? sortedTasks : sortedTasks.filter(isActiveTask);
 }
 
-export function getTaskCounts(tasks) {
+export function getTaskCounts(tasks, now = new Date()) {
   return {
     total: tasks.length,
     inProgress: tasks.filter((task) => task.status === 'IN_PROGRESS').length,
     done: tasks.filter((task) => task.status === 'DONE').length,
+    overdue: tasks.filter((task) => isOverdueTask(task, now)).length,
   };
 }
 

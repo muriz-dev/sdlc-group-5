@@ -139,7 +139,7 @@ h3 {
 
 .overview-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -167,6 +167,15 @@ h3 {
   color: #101828;
   font-size: 1.7rem;
   font-weight: 750;
+}
+
+.overdue-summary {
+  border-color: #fecdca;
+  background: #fffafa;
+}
+
+.overdue-summary .summary-value {
+  color: #b42318;
 }
 
 .content-grid {
@@ -272,6 +281,11 @@ h3 {
   color: #b54708;
 }
 
+.status-badge.danger {
+  background: #fef3f2;
+  color: #b42318;
+}
+
 .status-badge.neutral {
   background: #f2f4f7;
   color: #475467;
@@ -283,6 +297,23 @@ h3 {
   border: 1px solid #fedf89;
   border-radius: 12px;
   background: #fffaeb;
+}
+
+.overdue-notice {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid #fecdca;
+  border-radius: 10px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.overdue-notice span {
+  color: #912018;
 }
 
 .change-notice-heading {
