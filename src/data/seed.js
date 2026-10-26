@@ -7,6 +7,7 @@ const tasks = [
     source: 'LMS',
     type: 'GROUP',
     status: 'TODO',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
     additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
   {
@@ -17,7 +18,8 @@ const tasks = [
     source: 'Personal Notes',
     type: 'INDIVIDUAL',
     status: 'IN_PROGRESS',
-    additionalInstructions: 'Fokuskan pada bab Normalisasi dan ERD.',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
+    additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
   {
     id: 'TASK-003',
@@ -27,7 +29,8 @@ const tasks = [
     source: 'Class Announcement',
     type: 'GROUP',
     status: 'TODO',
-    additionalInstructions: 'Maksimal 10 slide dan gunakan template resmi universitas.',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
+    additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
   {
     id: 'TASK-004',
@@ -37,7 +40,8 @@ const tasks = [
     source: 'LMS',
     type: 'INDIVIDUAL',
     status: 'DONE',
-    additionalInstructions: 'Kerjakan langsung di platform LMS sebelum batas waktu habis.',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
+    additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
   {
     id: 'TASK-005',
@@ -47,7 +51,8 @@ const tasks = [
     source: 'Personal Notes',
     type: 'INDIVIDUAL',
     status: 'IN_PROGRESS',
-    additionalInstructions: 'Buat sketsa kasar wireframe untuk halaman utama dan menu profil.',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
+    additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
   {
     id: 'TASK-006',
@@ -57,7 +62,8 @@ const tasks = [
     source: 'Class Announcement',
     type: 'INDIVIDUAL',
     status: 'TODO',
-    additionalInstructions: 'Baca bab 4 tentang OSI Layer dan buat ringkasan singkat.',
+    description: 'Submit the preliminary outline of the team software engineering project, including system scope, member roles, and development milestones.',
+    additionalInstructions: 'Pastikan format file PDF dan sudah mencantumkan nama anggota kelompok.',
   },
 ];
 
