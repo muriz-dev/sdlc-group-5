@@ -22,6 +22,8 @@ Open the local address shown by Vite. Run `npm run build` to create a production
 
 - View six seeded tasks and select a task for details.
 - See total and completed task counts.
+- Search tasks by ID, title, or course and filter them by status, type, or course.
+- View Active, Completed, or All tasks with counts and clear all search/filter selections.
 - Automatically detect unfinished tasks whose deadline has passed and keep them visible with a clear **OVERDUE** label.
 - Mark an unfinished task as done.
 - Reopen a completed task, returning it to `TODO`.
