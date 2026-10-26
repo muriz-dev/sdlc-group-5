@@ -22,6 +22,7 @@ Open the local address shown by Vite. Run `npm run build` to create a production
 
 - View six seeded tasks and select a task for details.
 - See total and completed task counts.
+- Automatically detect unfinished tasks whose deadline has passed and keep them visible with a clear **OVERDUE** label.
 - Mark an unfinished task as done.
 - Reopen a completed task, returning it to `TODO`.
 - Reset all browser demo changes to the original seed data.

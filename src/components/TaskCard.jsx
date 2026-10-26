@@ -1,5 +1,6 @@
 import StatusBadge from './StatusBadge.jsx';
 import { formatDeadline } from '../utils/dateUtils.js';
+import { isOverdueTask } from '../utils/taskUtils.js';
 
 function getUpdateLabel(task) {
   if (task.deadlineUpdatedAt) return 'Deadline updated';
@@ -7,8 +8,9 @@ function getUpdateLabel(task) {
   return '';
 }
 
-export default function TaskCard({ task, isSelected, onSelect }) {
+export default function TaskCard({ task, isSelected, onSelect, currentTime }) {
   const updateLabel = getUpdateLabel(task);
+  const isOverdue = isOverdueTask(task, currentTime);
 
   return (
     <button
@@ -23,6 +25,7 @@ export default function TaskCard({ task, isSelected, onSelect }) {
           <span className="meta"> · {task.id}</span>
         </span>
         <span className="card-badges">
+          {isOverdue && <StatusBadge status="OVERDUE" />}
           {updateLabel && <span className="card-update">{updateLabel}</span>}
           <StatusBadge status={task.status} />
         </span>

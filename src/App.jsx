@@ -18,15 +18,21 @@ export default function App() {
     () => getVisibleTasks(data.tasks, false)[0]?.id ?? null,
   );
   const [showCompleted, setShowCompleted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
     saveState(STORAGE_KEY, data);
   }, [data]);
 
+  useEffect(() => {
+    const timerId = window.setInterval(() => setCurrentTime(new Date()), 60_000);
+    return () => window.clearInterval(timerId);
+  }, []);
+
   const selectedTask = data.tasks.find((task) => task.id === selectedId) ?? null;
   const visibleTasks = getVisibleTasks(data.tasks, showCompleted);
   const visibleCourseCount = new Set(visibleTasks.map((task) => task.course)).size;
-  const counts = getTaskCounts(data.tasks);
+  const counts = getTaskCounts(data.tasks, currentTime);
 
   const emptyMessage = showCompleted
     ? 'No academic tasks are available.'
@@ -81,6 +87,10 @@ export default function App() {
           <p className="summary-label">In progress tasks</p>
           <p className="summary-value">{counts.inProgress}</p>
         </article>
+        <article className="summary-card overdue-summary">
+          <p className="summary-label">Overdue tasks</p>
+          <p className="summary-value">{counts.overdue}</p>
+        </article>
         <article className="summary-card">
           <p className="summary-label">Done tasks</p>
           <p className="summary-value">{counts.done}</p>
@@ -112,10 +122,15 @@ export default function App() {
             selectedId={selectedId}
             onSelect={setSelectedId}
             emptyMessage={emptyMessage}
+            currentTime={currentTime}
           />
         </section>
         <aside className="panel" aria-label="Selected task details">
-          <TaskDetails task={selectedTask} onAdvanceStatus={handleAdvanceStatus} />
+          <TaskDetails
+            task={selectedTask}
+            onAdvanceStatus={handleAdvanceStatus}
+            currentTime={currentTime}
+          />
         </aside>
       </section>
     </main>

@@ -5,6 +5,7 @@ export default function TaskList({
   selectedId,
   onSelect,
   emptyMessage = 'No academic tasks are available.',
+  currentTime,
 }) {
   if (tasks.length === 0) {
     return <div className="empty-state">{emptyMessage}</div>;
@@ -18,6 +19,7 @@ export default function TaskList({
             task={task}
             isSelected={task.id === selectedId}
             onSelect={onSelect}
+            currentTime={currentTime}
           />
         </li>
       ))}

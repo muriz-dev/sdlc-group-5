@@ -42,7 +42,7 @@ src/components/
   StatusBadge.jsx           # badge status + pemetaan warna (tone)
   ResetControl.jsx          # reset data dengan konfirmasi dua langkah
 src/data/seed.js            # 6 record demo deterministik + createSeedData()
-src/utils/taskUtils.js      # sortTasksByDueDate(), isActiveTask(), getVisibleTasks(), getTaskCounts(), advanceTaskStatus()
+src/utils/taskUtils.js      # sorting, active/overdue detection, visibility, counts, and status transitions
 src/utils/dateUtils.js      # formatDeadlineDate(), formatDeadline() (tanggal + jam 24 jam)
 src/utils/storage.js        # loadState(), saveState(), resetState() + validasi shape
 src/styles.css              # seluruh styling, termasuk media query responsif
@@ -85,6 +85,7 @@ Bentuk state global: `{ tasks: Task[] }`.
 9. `TaskDetails` menampilkan notice perubahan bila `deadlineUpdatedAt` atau `instructionsUpdatedAt` tidak kosong: badge `Updated`, entri `Deadline changed` (deadline baru + deadline sebelumnya + tanggal perubahan), entri `Instructions updated`, dan marker `Changed` di samping `Due date`. `previousDueDate`/`previousDueTime` hanya dibaca saat `deadlineUpdatedAt` ada. Field penanda memakai string kosong (bukan `null`) agar `matchesShape` tetap konsisten dengan task lain yang tidak berubah.
 10. `TaskCard` menampilkan penanda ringkas di daftar: `Deadline updated` bila `deadlineUpdatedAt` ada, selain itu `Instructions updated` bila `instructionsUpdatedAt` ada. Tujuannya agar pengguna bisa melihat task yang berubah tanpa membuka detail satu per satu.
 11. `showCompleted` (default `false`) dikendalikan checkbox `Show completed (n)` di header daftar. Ringkasan `N active assignments from M courses · nearest deadline first` dihitung dari daftar yang terlihat. Saat toggle dimatikan dan task terpilih berstatus `DONE`, `selectedId` pindah ke task aktif pertama (atau `null`). Saat task terpilih berubah menjadi `DONE` dengan completed disembunyikan, selection juga pindah ke task aktif berikutnya. Empty state memakai pesan berbeda: `No active assignments...` vs `No academic tasks are available.`
+12. Change Injection P11 diterapkan melalui `isOverdueTask()`: task berstatus selain `DONE` dianggap terlambat bila waktu lokal saat ini sudah melewati gabungan `dueDate` dan `dueTime`. Task terlambat tetap termasuk dalam daftar aktif, diberi badge `OVERDUE` pada kartu dan panel detail, serta dihitung pada kartu ringkasan. Waktu pembanding diperbarui setiap menit agar label berubah tanpa reload halaman.
 
 Catatan: alur "Reopen Task" mengubah status `DONE` → `TODO`, bukan mengembalikan status sebelumnya (`IN_PROGRESS`).
 
