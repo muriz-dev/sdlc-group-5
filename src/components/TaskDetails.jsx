@@ -79,6 +79,11 @@ export default function TaskDetails({ task, onAdvanceStatus }) {
         <dd>{task.additionalInstructions || 'Tidak ada instruksi tambahan.'}</dd>
       </dl>
 
+      <section className="task-detail-section" aria-label="Task description">
+        <h3>Description</h3>
+        <p className="task-description">{task.description || 'No description provided.'}</p>
+      </section>
+
       <button
         className="primary-button"
         type="button"
