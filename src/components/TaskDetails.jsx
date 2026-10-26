@@ -74,7 +74,7 @@ export default function TaskDetails({ task, onAdvanceStatus, currentTime }) {
         </section>
       )}
 
-      {/* Tabel rincian atas: Additional Instructions dimasukkan ke sini */}
+      {/* Description sekarang dimasukkan ke dalam tabel rincian atas */}
       <dl className="details-list">
         <dt>Course</dt>
         <dd>{task.course}</dd>
@@ -89,11 +89,11 @@ export default function TaskDetails({ task, onAdvanceStatus, currentTime }) {
         <dd>{task.source}</dd>
         <dt>Type</dt>
         <dd>{task.type}</dd>
-        <dt>Additional Instructions</dt>
-        <dd>{task.additionalInstructions || 'Tidak ada instruksi tambahan.'}</dd>
+        <dt>Description</dt>
+        <dd>{task.description || 'No description provided.'}</dd>
       </dl>
 
-      {/* Description ditaruh di dalam kotak khusus (card/box) di bagian bawah */}
+      {/* Additional Instructions sekarang ditaruh di dalam kotak khusus di bagian bawah */}
       <div style={{ 
         backgroundColor: '#f8fafc', 
         border: '1px solid #e2e8f0', 
@@ -103,10 +103,10 @@ export default function TaskDetails({ task, onAdvanceStatus, currentTime }) {
         marginBottom: '20px'
       }}>
         <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 'bold', color: '#64748b', letterSpacing: '0.05em' }}>
-          DESCRIPTION
+          ADDITIONAL INSTRUCTIONS
         </h4>
         <p style={{ margin: '0', color: '#334155', lineHeight: '1.5' }}>
-          {task.description || 'No description provided.'}
+          {task.additionalInstructions || 'Tidak ada instruksi tambahan.'}
         </p>
       </div>
 
